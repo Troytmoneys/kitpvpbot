@@ -1,0 +1,27 @@
+{
+  "name": "kitpvpbot",
+  "version": "1.0.0",
+  "description": "Command-line toolkit for running Mineflayer KitPvP bots with difficulty presets.",
+  "bin": {
+    "kitpvpbot": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --eval \"console.log('No tests specified')\""
+  },
+  "keywords": [
+    "minecraft",
+    "mineflayer",
+    "bot",
+    "kitpvp"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "mineflayer": "^4.25.0",
+    "mineflayer-pathfinder": "^2.4.5",
+    "mineflayer-pvp": "^1.3.2",
+    "vec3": "^0.1.7"
+  }
+}
