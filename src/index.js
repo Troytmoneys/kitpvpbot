@@ -212,11 +212,49 @@ function createBot(index, config) {
     host: config.server.host,
     port: config.server.port,
     username,
-    version: false // auto-detect
+    version: false, // auto-detect
+    hideErrors: true
   });
 
   bot.loadPlugin(pvpPlugin);
   bot.loadPlugin(pathfinder);
+
+  const skippedBlockEntityChunks = new Set();
+
+  const chunkKey = (x, z) => `${x},${z}`;
+
+  const chunkWarningListener = (packet) => {
+    if (!packet || !packet.blockEntities || packet.blockEntities.length === 0) {
+      return;
+    }
+
+    if (bot.world.getColumn(packet.x, packet.z)) {
+      return;
+    }
+
+    const key = chunkKey(packet.x, packet.z);
+    if (skippedBlockEntityChunks.has(key)) {
+      return;
+    }
+
+    skippedBlockEntityChunks.add(key);
+    log(bot, `Skipping block entities for unloaded chunk at (${packet.x}, ${packet.z}).`);
+  };
+
+  bot._client.on('map_chunk', chunkWarningListener);
+
+  const chunkLoadListener = (point) => {
+    if (!point) {
+      return;
+    }
+
+    const key = chunkKey(point.x, point.z);
+    if (skippedBlockEntityChunks.delete(key)) {
+      log(bot, `Chunk at (${point.x}, ${point.z}) is now loaded.`);
+    }
+  };
+
+  bot.on('chunkColumnLoad', chunkLoadListener);
 
   bot.once('spawn', () => {
     setupMovements(bot);
@@ -235,6 +273,12 @@ function createBot(index, config) {
 
   bot.on('error', (err) => {
     log(bot, `Encountered error: ${err.message}`);
+  });
+
+  bot.once('end', () => {
+    skippedBlockEntityChunks.clear();
+    bot._client.removeListener('map_chunk', chunkWarningListener);
+    bot.removeListener('chunkColumnLoad', chunkLoadListener);
   });
 
   return bot;
