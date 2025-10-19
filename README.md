@@ -31,6 +31,7 @@ Short options can be combined with the arguments listed below:
 | ------ | ----------- |
 | `-s` | When provided without a value, forces the bot to use the *easy* preset. When followed by a value (e.g. `-s play.example.net:25565`) it is treated as the server address. |
 | `-h` | Switches to the *hard* preset (faster reactions, sprinting). |
+| `-g` | Enables the *godlike* preset with advanced combat behaviour (gear optimisation, strafing, clutch healing). |
 | `-b <number>` | Number of bot instances to spawn. Defaults to `1`. |
 | `--server <value>` | Alternative way to provide the server address if you want to keep the `-s` flag for toggling easy mode. |
 | `--help` | Display CLI help text. |
@@ -46,12 +47,16 @@ node src/index.js -s 192.168.1.50 -h -b 3
 
 # Equivalent using the installed binary
 npx kitpvpbot --server kitpvp.local:25570 -h -b 2
+
+# Deploy an all-out godlike duelist on a local arena
+node src/index.js --server 127.0.0.1:25565 -g
 ```
 
 ### Difficulty presets
 
 - **Easy** – Slower reaction time, no sprinting, automatically disengages after short fights.
 - **Hard** – Rapid retargeting, permanent sprinting while in combat, and minimal disengagement delays.
+- **Godlike** – Everything in *Hard* plus live gear optimisation (auto-equipping the best weapon, armour, and shield), predictive strafing with jump resets, and automatic soup/gapple healing when health dips.
 
 ## Development
 
